@@ -1,7 +1,7 @@
 import datetime
 
 
-class Date():
+class Calendar():
     def __init__(self):
         self.now = datetime.datetime.now()
 
