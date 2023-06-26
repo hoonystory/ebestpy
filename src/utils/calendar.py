@@ -1,9 +1,16 @@
 import datetime
 
 
-class Calendar():
+class Calendar:
     def __init__(self):
         self.now = datetime.datetime.now()
+        #
+        self.request_data_start_hour_day = 15
+        self.request_data_end_hour_day = 4
+        self.request_data_start_hour_night = 5
+
+        self.request_data_list_day = list(range(0, 5))
+        self.request_data_list_night = list(range(1, 6))
 
     def get_today_date(self):
         """
@@ -44,3 +51,9 @@ class Calendar():
         else:
             return self.get_today_date()
 
+    def is_holiday(self):
+        """
+        공휴일 여부 리턴
+        :return:
+        """
+        return not (self.get_today_of_week() in range(0, 5))

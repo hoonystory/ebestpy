@@ -1,16 +1,11 @@
 import multiprocessing
 import pandas as pd
-import src.utils.calendar
-
-import xacom
-import funcs
-
-
-# db_name = 'eBestDB'
-# git test
+from src.utils.calendar import Calendar
 
 if __name__ == '__main__':
     multiprocessing.freeze_support()
+
+    calendar = Calendar()
 
     hour = funcs.todayHour()
     today = funcs.todayDate()
