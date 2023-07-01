@@ -16,14 +16,41 @@ class MySql:
     db_path = ''
     conn = None
     cursor = None
+    engine = None
+    status = None
 
     def __init__(self, *args):
         # set database file path with first argument
         # if len(args) != 0:
         #     self.db_path = from_variables.get_file_path(from_variables.get_database_path(), args[0] + '.db')
 
-        self.conn = sqlite3.connect(self.db_path)
-        self.cursor = self.conn.cursor()
+        # self.conn = sqlite3.connect(self.db_path)
+        # self.cursor = self.conn.cursor()
+        self.status = STAND_BY
+
+    def check_login(self):
+        if self.status == LOGGED_ON:
+            return False
+        else:
+            return True
+
+    def login(self, database_name):
+        """
+
+        :param database_name:
+        :return:
+        """
+        if self.check_login() is False:
+            return
+        else:
+            self.engine = create_engine('mysql+pymysql://root:2413@127.0.0.1:3306/' + database_name, echo=False)
+            # log.info('DataBase Connected Successfully Initially')
+
+            self.conn = self.engine.connect()
+            self.status = LOGGED_ON
+
+            # return conn
+            # return engine
 
     def execute_query(self, query):
         return self.cursor.execute(query)
@@ -34,58 +61,3 @@ class MySql:
     def get_columns(self):
         return [column[0] for column in self.cursor.description]
 
-
-STAND_BY = 0
-LOGGED_ON = 1
-
-
-class DBConnect:
-    connect_state = STAND_BY
-
-    # print('DBLoginState: ' + str(connect_state))
-
-    def __init__(self):
-    # self.pid = xasys.return_pid()
-
-    def chkLogin(self):
-        if DBConnect.connect_state == LOGGED_ON:
-            return False
-        else:
-            return True
-
-    def login(self, dbName, log):
-        """
-        :param dbName:
-        :return:
-        """
-        if self.chkLogin() is False:
-            log.info('DataBase Connected Already!')
-            # print('---[p' + str(self.pid) + ' Info] DataBase Connected Already!')
-            return
-        else:
-            engine = create_engine('mysql+pymysql://root:2413@127.0.0.1:3306/' + dbName, echo=False)
-            log.info('DataBase Connected Successfully Initially')
-            # print('---[p' + str(self.pid) + ' Info] DataBase Connected Successfully Initially')
-
-            conn = engine.connect()
-            DBConnect.connect_state = LOGGED_ON
-
-            # return conn
-            return engine
-
-# class dbconnYN:
-#     def __init__(self):
-#         self.conn_state = 0
-#
-#     def connYN(self, dbNm):
-#         if dbConnect(dbNm) is not None:
-#             self.conn_state = 1
-#
-#         return self.conn_state
-
-
-# engine = dbConnect()
-# test = pd.read_sql('select * from test', con=engine)
-# print(test)
-#
-# engine.close()

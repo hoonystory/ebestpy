@@ -1,10 +1,12 @@
-def t9943():
-    trCode = 't9943'
-    pass
+from src.api.txn.txn import CommonTxnApi
+from src.api.txn.t9943 import T9943
+from src.api.txn.t9944 import T9944
 
 
 tr_list = {
-    't9943': t9943
+    'common': CommonTxnApi
+    , 't9943': T9943()
+    , 't9944': T9944()
 }
 
 

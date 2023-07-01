@@ -1,3 +1,15 @@
+# define constants
+const = {
+    'status': {
+        'STAND_BY': 0
+        , 'SUCCESS': 1
+    }
+}
+
+STAND_BY = 0
+SUCCESS = 1
+
+
 # Decorator
 def constant(func):
     def func_set(self, value):
