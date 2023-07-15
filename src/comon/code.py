@@ -1,8 +1,9 @@
-class TrCode:
+class Code:
+    """
+    요청할 종목 리스트 나열
+    주식/선물옵션 종목 리스트를 받아오면 여기에 저장
+    """
     def __init__(self):
-        self.stock_market_code_tr_list = ['t8424', 't8430']
-        self.future_market_code_tr_list = ['t9943', 't9944']
-
         self.shcode = []
         self.focode = []
         self.opcode = []

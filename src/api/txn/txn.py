@@ -1,15 +1,13 @@
-"""
-            InBlock = parseInfield(trCode)
-            OutBlock = parseOutfield(trCode)
-            InBlockValue = [upcode, gubun]
-            receiver.query(trCode, InBlock, OutBlock, InBlockValue, log)
-"""
+from src.model.model import model
 
 
 class CommonTxnApi:
     """
-    예상지수
-    gubun     : string, 1 :   조회구분(1: 장전, 2: 장후)
+    common transaction request class
+    tr_code:
+    field_info:
+    in_block_values:
+    receiver:
     """
     tr_code = None
     field_info = {}
@@ -19,12 +17,15 @@ class CommonTxnApi:
 
     def __init__(self, tr_code):
         self.tr_code = tr_code
-        self.field_info['in'] = ['upcode', 'gubun']
-        self.field_info['out'] = [
-            ['pricejisu', 'sign', 'change', 'volume',
-             'yhighjo', 'yupjo', 'yunchgjo', 'ylowjo', 'ydownjo', 'ytrajo'],
-            ['chetime', 'jisu', 'sign', 'change', 'volume', 'volcha']
-        ]
+        tr_code_field_list = model.get(tr_code)
+        if tr_code_field_list != 'None':
+            self.field_info['in'] = tr_code_field_list.get('in')
+            self.field_info['out'] = [
+                tr_code_field_list.get('out1'),
+                tr_code_field_list.get('out2')
+            ]
+        else:
+            pass
         # self.receiver = XAQueryResultHandler.get_instance()
 
     def set_in_block_values(self, parameter_array):

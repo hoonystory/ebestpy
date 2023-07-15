@@ -1,8 +1,7 @@
 from src.utils.log import logger
 import multiprocessing
-import pandas as pd
 from src.utils.calendar import Calendar
-from src.utils.trcode import TrCode
+from src.comon.trcode import TrCode
 from src.utils.db import MySql
 import src.api.txn
 
