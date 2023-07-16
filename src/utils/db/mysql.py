@@ -26,10 +26,10 @@ class MySql:
 
         # self.conn = sqlite3.connect(self.db_path)
         # self.cursor = self.conn.cursor()
-        self.status = STAND_BY
+        self.status = const.STAND_BY
 
     def check_login(self):
-        if self.status == LOGGED_ON:
+        if self.status == const.LOGGED_ON:
             return False
         else:
             return True
@@ -47,7 +47,7 @@ class MySql:
             # log.info('DataBase Connected Successfully Initially')
 
             self.conn = self.engine.connect()
-            self.status = LOGGED_ON
+            self.status = const.LOGGED_ON
 
             # return conn
             # return engine

@@ -7,6 +7,7 @@ const = {
 }
 
 STAND_BY = 0
+LOGGED_ON = 1
 SUCCESS = 1
 
 
@@ -35,9 +36,6 @@ class Const(object):
     @constant
     def weekday_list():
         return list(range(0, 5))
-
-
-
 
     # 현재 시간을 가져와서, 어느 시간대(주간/야간) 데이터를 수집할 것인지를 판단함
     # dayOfWeek = funcs.todayOfWeek()
