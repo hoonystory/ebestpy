@@ -1,39 +1,50 @@
-from src.utils.log import logger
+from src.utils.log import log
 from src.utils.calendar import Calendar
-from config import trcode
 from src.api.login import Login
-from src.api.transaction.txn import Transaction
+from src.common import template
+import requests
 
 
 def main():
-    logger.debug('init main')
-
-    # multiprocessing.freeze_support()
     calendar = Calendar()
     login = Login()
-    # tr_code = TrCode()
-    # mysql = MySql()
 
-    logger.info('today: ' + calendar.get_today_date())
-    logger.info('closest trade day: ' + calendar.get_closest_trade_day())
+    log.debug('init main')
+    log.info('today: ' + calendar.get_today_date())
+    log.info('closest trade day: ' + calendar.get_closest_trade_day())
 
     # db login
 
-    txn_list = []
     login.init()
 
-    # 공휴일이 아닌 경우,
-    # if calendar.is_holiday() is False:
-        # 코드 정보 세팅: 휴장일인 경우, t3518(해외지수)만 작동하고, 해외지수는 코드리스트 업데이트 필요없음
-    for tr_code in trcode.future_market_code_tr_list:
-        txn_list.append(Transaction(tr_code))
-        # 월요일(0)~ 금요일(4), 오후 16시 이후에는 주간데이터, (혹은 에러로 인해 야간에 실행해야하는 경우),
-    # else:
+    code_list = []
+    chart_list = []
+    for i in template.code_list:
+        code_list.append(template.code_list[i])
+    for i in template.chart_list:
+        chart_list.append(template.chart_list[i])
 
-    for txn in txn_list:
-        print(txn.tr_code)
-        print(txn.field_info)
+    # set header
+    template.header['Authorization'] = 'Bearer ' + login.access_token
+
+    for k, v in template.code_list.items():
+        # set parameter and send post request
+        # print(k, v)
+        get_response(k, v, template.header)
+
+    # for i in chart_list:
+    # set parameter and send post request
+    # get_response(i)
+
+
+def get_response(tr_code, data, header):
+    template.header['tr_cd'] = tr_code
+    json_data = {tr_code + 'InBlock': data['InBlock']}
+    response = requests.post(data['url'], json=json_data, headers=header)
+    print(response)
+    print(response.text)
 
 
 if __name__ == '__main__':
     main()
+

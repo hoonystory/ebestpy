@@ -1,4 +1,5 @@
 import requests
+from src.utils.log import log
 from config import url
 from config import login
 
@@ -26,14 +27,9 @@ class Login:
             self.access_token = self.response.json().get('access_token')
             self.expires_in = self.response.json().get('expires_in')
 
-        print('access_token:', self.access_token)
-        print('expires_in:', self.expires_in)
-        # print(r)
-        # print(r.status_code)
-        # print(r.request)
-        # print(r.raise_for_status())
-        # print(r.json())
-        # pass
+        log.debug('init login')
+        log.info('access_token: ' + self.access_token)
+        log.info('expires_in: ' + str(self.expires_in))
 
     def get_access_token_by_request(self):
         params = {
