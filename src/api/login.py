@@ -48,9 +48,12 @@ class Login:
         if self.response.status_code == 200:
             self.access_token = self.response.json().get('access_token')
             self.expires_in = self.response.json().get('expires_in')
+            log.debug('login success')
+            log.info('access_token: {}'.format(self.access_token))
+            log.info('expires_in: {}'.format(self.expires_in))
         else:
-            pass
+            log.error('login failure')
+            log.error('error code: {}'.format(self.response.status_code))
+            log.error('status: {}'.format(self.response.reason))
 
-        log.debug('init login')
-        log.info('access_token: ' + self.access_token)
-        log.info('expires_in: ' + str(self.expires_in))
+

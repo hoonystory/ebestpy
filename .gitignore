@@ -163,3 +163,5 @@ cython_debug/
 /config/login.py
 /config/mongodb.py
 /config/sqlite3.py
+/docs/memo.md
+/docs/todo_list.md
