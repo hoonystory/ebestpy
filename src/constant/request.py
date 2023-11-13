@@ -65,14 +65,14 @@ future_option = {
                 'gubun': ''
             },
             'limit': 2,
-            'code_list': [1, 2, 3, 4]
+            'code_list': [1]
         },
         't9944': {
             'inblock': {
                 'gubun': ''
             },
             'limit': 2,
-            'code_list': [1, 2, 3, 4]
+            'code_list': [1]
         },
     },
 }

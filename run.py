@@ -17,24 +17,24 @@ def main():
     log.info('today: ' + calendar.get_today_date())
     log.info('closest trade day: ' + calendar.get_closest_trade_day())
 
-    code_list = []
-    future_code_list = []
-    future_option_dict = request.future_option
+    f_tr_dict = {}
+    f_cd_dict = {}
+    future_chart_dict = request.future_option['chart']
     # future_code_tr_list = ['t9943', 't9944']
-    market_data_dict = request.future_option['market_data']
+    future_code_dict = request.future_option['market_data']
 
     # 코드 리스트 먼저 가져오기
-    for i in market_data_dict:
+    for i in future_code_dict:
         if i in ['t9943', 't9944']:
-            set_pathname_and_append_list(market_data_dict, i, future_code_list)
+            set_pathname_and_append_list(future_code_dict, i, f_cd_dict)
 
-    asyncio.run(request_api_from_list(future_code_list, login.access_token))
+    # await 확인
+    asyncio.run(request_api_from_list(f_cd_dict, login.access_token))
 
     # 코드 리스트, 경로 추가하여 요청
-    for i in future_option_dict:
-        for k in future_option_dict[i]:
-            if k.startswith('t'):
-                set_pathname_and_append_list(future_option_dict[i], k, code_list)
+    for i in future_chart_dict:
+        if i.startswith('t8415'):
+            set_pathname_and_append_list(future_chart_dict, i, f_tr_dict)
 
     # for k, v in request.future_option.items():
         # set parameter and send post request
@@ -43,12 +43,13 @@ def main():
         # if k.startswith('t'):
         #     asyncio.run(request_api(k, v, login.access_token))
 
-    asyncio.run(request_api_from_list(code_list, login.access_token))
+    asyncio.run(request_api_from_list(f_tr_dict, login.access_token))
 
 
-def set_pathname_and_append_list(root_dict, index, code_list):
-    root_dict[index]['pathname'] = root_dict['pathname']
-    code_list.append(root_dict[index])
+def set_pathname_and_append_list(root_dict, key, result_dict):
+    result_dict[key] = root_dict[key]
+    result_dict[key]['pathname'] = root_dict['pathname']
+    result_dict[key]['tr_code'] = key
 
 
 if __name__ == '__main__':

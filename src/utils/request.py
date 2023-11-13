@@ -12,9 +12,11 @@ async def request_api_from_list(tr_list, access_token):
     # func_list = [get_response('t9943', request.future_option['t9943'], access_token)
     #     , get_response('t8415', request.future_option['t8415'], access_token)]
 
-    futures = [asyncio.ensure_future(get_response(k, tr_list[k], access_token))
+    futures = [asyncio.ensure_future(get_response(tr_list[k], access_token))
                for k, v in tr_list.items() if k.startswith('t')]
-    await asyncio.gather(*futures)
+    result = await asyncio.gather(*futures)
+    print(result)
+    # log.info(result)
     # await asyncio.gather(func_list)
 
 
@@ -22,8 +24,11 @@ async def request_api(tr_code, tr_info, access_token):
     await asyncio.create_task(get_response(tr_code, tr_info, access_token))
 
 
-async def get_response(tr_code, tr_info, access_token):
+async def get_response(tr_info, access_token):
+    # result object
+    result = {}
     # set header
+    tr_code = tr_info['tr_code']
     header = {
         'content-type': 'application/json',
         'tr_cd': tr_code,
@@ -53,9 +58,12 @@ async def get_response(tr_code, tr_info, access_token):
             , headers=header
         )
         await asyncio.sleep(1 / tr_info['limit'])
-        # log response
-        # log.info(response)
-        log.info(response.text)
+        # log.info(response.text)
+        if result.get(tr_code) is None:
+            result[tr_code] = []
+        result[tr_code].append(response.text)
+
+    return result
 
 
 def save_response(response):
