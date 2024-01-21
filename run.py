@@ -2,8 +2,13 @@ from src.utils.log import log
 from src.utils.calendar import Calendar
 from src.api.login import Login
 from src.constant import request
-from src.utils.request import request_api_from_list
+from src.request import future_option
+from src.request import stock
+from src.request import real_time
 from src.utils.request import request_api
+from src.utils.db.mongo import MongoDB
+import pprint
+import json
 import asyncio
 
 
@@ -13,45 +18,57 @@ def main():
         return False
 
     calendar = Calendar()
+    log.info('Today: %s', calendar.get_today_date())
+    log.info('Closest_Trade_Day: %s', calendar.get_closest_trade_day())
 
-    log.info('today: ' + calendar.get_today_date())
-    log.info('closest trade day: ' + calendar.get_closest_trade_day())
+    mongo_db = MongoDB()
+    log.info(mongo_db.client.list_database_names())
 
-    f_tr_dict = {}
-    f_cd_dict = {}
-    future_chart_dict = request.future_option['chart']
-    # future_code_tr_list = ['t9943', 't9944']
-    future_code_dict = request.future_option['market_data']
-
-    # 코드 리스트 먼저 가져오기
-    for i in future_code_dict:
-        if i in ['t9943', 't9944']:
-            set_pathname_and_append_list(future_code_dict, i, f_cd_dict)
-
-    # await 확인
-    asyncio.run(request_api_from_list(f_cd_dict, login.access_token))
-
-    # 코드 리스트, 경로 추가하여 요청
-    for i in future_chart_dict:
-        if i.startswith('t8415'):
-            set_pathname_and_append_list(future_chart_dict, i, f_tr_dict)
-
-    # for k, v in request.future_option.items():
-        # set parameter and send post request
-        # only for transaction code (tr_code)
-        # 비동기 작업 세트 등록
-        # if k.startswith('t'):
-        #     asyncio.run(request_api(k, v, login.access_token))
-
-    asyncio.run(request_api_from_list(f_tr_dict, login.access_token))
+    # 코드 리스트 추가, Transaction 요청
+    for i in [
+        'stock.market_data'
+        , 'stock.chart'
+        # , 'future.market_data'
+    ]:
+        response = asyncio.run(request_api(get_list(i), login.access_token))
+        print(response)
+        if response[0].get('t8410') is not None:
+            # insert_into_mongo_db(response, mongo_db)
+            print_mongo_db_data(mongo_db)
 
 
-def set_pathname_and_append_list(root_dict, key, result_dict):
-    result_dict[key] = root_dict[key]
-    result_dict[key]['pathname'] = root_dict['pathname']
-    result_dict[key]['tr_code'] = key
+def print_mongo_db_data(instance):
+    db = instance.client.ebest
+    t8410 = db.t8410
+    pprint.pprint(t8410.find_one({'date': '20240119'}))
+
+
+def insert_into_mongo_db(res, instance):
+    db = instance.client.ebest
+    t8410 = db.t8410
+    json_str = res[0]['t8410'][0]
+    post_id = t8410.insert_one(json.loads(json_str)).inserted_id
+    print(post_id)
+
+
+def get_list(type):
+    result_dict = {}
+    dict_list = {
+        'stock.chart': stock.chart,
+        'stock.market_data': stock.market_data,
+        'future.chart': future_option.chart,
+        'future.market_data': future_option.market_data
+    }
+    if type is not None:
+        selected_dict = dict_list[type]
+        for k, v in selected_dict.items():
+            if k.startswith('t'):
+                result_dict[k] = v
+                result_dict[k]['pathname'] = selected_dict['pathname']
+                result_dict[k]['tr_code'] = k
+
+    return result_dict
 
 
 if __name__ == '__main__':
     main()
-
