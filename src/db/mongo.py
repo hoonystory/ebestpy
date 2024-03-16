@@ -8,6 +8,7 @@ from config import mongodb
 # client = MongoClient(mongodb_URI)
 
 class MongoDB:
+    db_name = 'mongo'
     mongo_host = mongodb.config['local']['host']
     mongo_port = mongodb.config['local']['port']
 

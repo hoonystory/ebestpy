@@ -21,7 +21,7 @@ chart = {
             'shcode': '005930',
             'gubun': '4',
             'qrycnt': 500,
-            'sdate': '20240101',
+            'sdate': '20230101',
             'edate': '20240121',
             'cts_date': '',
             'comp_yn': 'N',

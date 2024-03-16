@@ -1,0 +1,2 @@
+print(None or 'test')
+

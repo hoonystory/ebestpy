@@ -36,7 +36,6 @@ class MySql:
 
     def login(self, database_name):
         """
-
         :param database_name:
         :return:
         """
