@@ -25,15 +25,15 @@ def main():
     log.info(mongo_db.client.list_database_names())
 
     # 코드 리스트 추가, Transaction 요청
-    for i in [
-        'stock.market_data'
-        # , 'stock.chart'
-        # , 'future.market_data'
-    ]:
+    # for i in [
+    #     'stock.market_data'
+    #     # , 'stock.chart'
+    #     # , 'future.market_data'
+    # ]:
         # 비동기 요청
         # 갈과 값이 한번에 모여서 리턴 되기 때문에,
         # DB에 저장해야하는 작업이 있다면 처리 중에 저장하도록 인스턴스를 추가한다.
-        asyncio.run(request_api(get_list(i), login.access_token))
+        # asyncio.run(request_api(get_list(i), login.access_token))
         # response = asyncio.run(request_api(get_list(i), login.access_token))
         # print(response)
 
