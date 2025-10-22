@@ -2,11 +2,11 @@ from src.utils.log import log
 from src.utils.calendar import calendar
 from src.service.login import Login
 from src.constant import future_option, stock
-from src.service.request import request_api
-from src.db.mongo import MongoDB
+# from src.service.request import request_api
+# from src.db.mongo import MongoDB
 import pprint
 import json
-import asyncio
+# import asyncio
 
 
 def main():
