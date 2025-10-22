@@ -21,8 +21,8 @@ def main():
     log.info('Closest_Trade_Day: %s', ins_calendar.get_closest_trade_day())
 
     # DB 객체 생성
-    mongo_db = MongoDB()
-    log.info(mongo_db.client.list_database_names())
+    # mongo_db = MongoDB()
+    # log.info(mongo_db.client.list_database_names())
 
     # 코드 리스트 추가, Transaction 요청
     # for i in [
