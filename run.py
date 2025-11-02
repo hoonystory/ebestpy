@@ -6,10 +6,13 @@ from src.constant import future_option, stock
 # from src.db.mongo import MongoDB
 import pprint
 import json
-# import asyncio
+import asyncio
+# import requests
+import websockets
+import json
 
 
-def main():
+async def main():
     # 로그인 객체 생성
     login = Login()
     if login.response.status_code != 200:
@@ -23,6 +26,37 @@ def main():
     # DB 객체 생성
     # mongo_db = MongoDB()
     # log.info(mongo_db.client.list_database_names())
+
+    # response = requests.post(
+    #     'wss://openapi.ls-sec.co.kr:9443/websocket'
+    #     , json={
+    #         "body": {
+    #             "tr_cd": "NWS",
+    #             "tr_key": "NWS001"
+    #         }
+    #     }
+    #     , headers={
+    #         'token': login.access_token,
+    #         "tr_type": "3"
+    #     }
+    # )
+
+    info = {
+        "header": {
+            "token": login.access_token,
+            "tr_type": "3"
+        },
+        "body": {
+            "tr_cd": "NWS",
+            "tr_key": "NWS001"
+        }
+    }
+
+    # print(str(json.dumps(info)))
+    print(login.access_token)
+    await connect(json.dumps(info))
+
+    # print(response)
 
     # 코드 리스트 추가, Transaction 요청
     # for i in [
@@ -44,6 +78,28 @@ def main():
     #   - 월 이동평균선 데이터를 세팅
     #   - 현재가가 100 월 이동평균선 위에 있는 종목들인 경우, 종목코드를 리턴
 
+
+# async def news():
+#     ws_app = await websockets.connect(
+#         'wss://openapi.ls-sec.co.kr:9443/websocket',
+#         ping_interval=None
+#     )
+#     # await websocket.send("ping")
+#     while True:
+#         response = await ws_app.recv()
+#         print(response)
+#         # time.sleep(1)
+
+
+async def connect(param):
+    # 웹 소켓에 접속을 합니다.
+    async with websockets.connect("wss://openapi.ls-sec.co.kr:9443/websocket") as websocket:
+        # str = '{header":{"token":"ZWd1RDVtcXFwYyJ9.SkZaYiV....","tr_type":"3"},"body":{"tr_cd": "NWS","tr_key":"NWS001"}}'
+        # 웹 소켓 서버로 데이터를 전송합니다.
+        await websocket.send(param)
+        # 웹 소켓 서버로 부터 메시지가 오면 콘솔에 출력합니다.
+        data = await websocket.recv()
+        print(data)
 
 def save_data(db_instance, res):
     if db_instance is not None:
@@ -83,4 +139,4 @@ def get_list(type):
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
