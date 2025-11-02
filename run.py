@@ -54,7 +54,7 @@ async def main():
 
     # print(str(json.dumps(info)))
     print(login.access_token)
-    await connect(json.dumps(info))
+    await connect(json.dumps(info), mongo_db)
 
     # print(response)
 
