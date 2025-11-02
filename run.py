@@ -3,7 +3,7 @@ from src.utils.calendar import calendar
 from src.service.login import Login
 from src.constant import future_option, stock
 # from src.service.request import request_api
-# from src.db.mongo import MongoDB
+from src.db.mongo import MongoDB
 import pprint
 import json
 import asyncio
@@ -24,7 +24,7 @@ async def main():
     log.info('Closest_Trade_Day: %s', ins_calendar.get_closest_trade_day())
 
     # DB 객체 생성
-    # mongo_db = MongoDB()
+    mongo_db = MongoDB()
     # log.info(mongo_db.client.list_database_names())
 
     # response = requests.post(
@@ -91,7 +91,7 @@ async def main():
 #         # time.sleep(1)
 
 
-async def connect(param):
+async def connect(param, database):
     # 웹 소켓에 접속을 합니다.
     async with websockets.connect("wss://openapi.ls-sec.co.kr:9443/websocket") as websocket:
         while True:
@@ -103,10 +103,11 @@ async def connect(param):
                 if json_data['body'] == None:
                     continue
                 else:
-                    print(json_data)
+                    database.insert(json_data)
+                    # print(json_data)
 
 
-FUTURE_SISE = 'FC0'
+# FUTURE_SISE = 'FC0'
 
 # 웹 소켓 관련 신경쓸 필요없음
 # import websockets
