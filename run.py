@@ -94,12 +94,43 @@ async def main():
 async def connect(param):
     # 웹 소켓에 접속을 합니다.
     async with websockets.connect("wss://openapi.ls-sec.co.kr:9443/websocket") as websocket:
-        # str = '{header":{"token":"ZWd1RDVtcXFwYyJ9.SkZaYiV....","tr_type":"3"},"body":{"tr_cd": "NWS","tr_key":"NWS001"}}'
-        # 웹 소켓 서버로 데이터를 전송합니다.
-        await websocket.send(param)
-        # 웹 소켓 서버로 부터 메시지가 오면 콘솔에 출력합니다.
-        data = await websocket.recv()
-        print(data)
+        while True:
+            await websocket.send(param)
+            # 웹 소켓 서버로 부터 메시지가 오면 콘솔에 출력합니다.
+            while True:
+                data = await websocket.recv()
+                json_data = json.loads(data)
+                if json_data['body'] == None:
+                    continue
+                else:
+                    print(json_data)
+
+
+FUTURE_SISE = 'FC0'
+
+# 웹 소켓 관련 신경쓸 필요없음
+# import websockets
+# async def real_api(real_code, ticker):
+#     while True:
+        # 웹 소켓에 접속을 합니다.
+        # async with websockets.connect(BASE_URL_WEBS) as websocket:
+        #     str = reg_future_real(real_code, ticker)
+        #
+        #     # 웹 소켓 서버로 데이터를 전송합니다.
+        #     await websocket.send(str);
+        #     print('wait')
+        #     time.sleep(2)
+        #
+        #     while True:
+        #         # 웹 소켓 서버로 부터 메시지가 오면 콘솔에 출력합니다.
+        #         data_s = await websocket.recv();
+        #         data = json.loads(data_s)
+        #         if data['body'] == None: # 시세가 바로 오지 않음 None이면 waiting
+        #             time.sleep(1)
+        #             continue
+        #         if real_code == FUTURE_SISE:
+        #             on_future_sise(data['body'])
+
 
 def save_data(db_instance, res):
     if db_instance is not None:
