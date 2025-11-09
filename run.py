@@ -10,6 +10,7 @@ import asyncio
 # import requests
 import websockets
 import json
+import time
 
 
 async def main():
@@ -54,7 +55,7 @@ async def main():
 
     # print(str(json.dumps(info)))
     print(login.access_token)
-    await connect(json.dumps(info), mongo_db)
+    await get_news(json.dumps(info), mongo_db)
 
     # print(response)
 
@@ -91,20 +92,28 @@ async def main():
 #         # time.sleep(1)
 
 
-async def connect(param, database):
-    # 웹 소켓에 접속을 합니다.
-    async with websockets.connect("wss://openapi.ls-sec.co.kr:9443/websocket") as websocket:
-        while True:
-            await websocket.send(param)
-            # 웹 소켓 서버로 부터 메시지가 오면 콘솔에 출력합니다.
+async def get_news(param, database):
+    async def connect(param, database):
+        # 웹 소켓에 접속을 합니다.
+        async with websockets.connect("wss://openapi.ls-sec.co.kr:9443/websocket") as websocket:
             while True:
-                data = await websocket.recv()
-                json_data = json.loads(data)
-                if json_data['body'] == None:
-                    continue
-                else:
-                    database.insert(json_data)
-                    # print(json_data)
+                await websocket.send(param)
+                # 웹 소켓 서버로 부터 메시지가 오면 콘솔에 출력합니다.
+                while True:
+                    data = await websocket.recv()
+                    json_data = json.loads(data)
+                    if json_data['body'] == None:
+                        continue
+                    else:
+                        database.insert(json_data)
+                        # print(json_data)
+    try:
+        await connect(param, database)
+    except Exception as e:
+        print(e)
+        time.sleep(10)
+        await connect(param, database)
+
 
 
 # FUTURE_SISE = 'FC0'
