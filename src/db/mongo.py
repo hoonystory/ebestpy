@@ -41,7 +41,7 @@ class MongoDB:
             col = db[collection]
 
             result = col.insert_one(json_data)
-            print(result.acknowledged)
+            print(result.acknowledged, json_data['body'])
         except Exception as e:
             raise Exception(
                 "The following error occurred: ", e)
