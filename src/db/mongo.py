@@ -38,8 +38,7 @@ class MongoDB:
     def insert(self, database, collection, json_data):
         try:
             db = self.client[database]
-            col = db.database[collection]
-            print(db, col)
+            col = db[collection]
 
             result = col.insert_one(json_data)
             print(result.acknowledged)
