@@ -105,7 +105,7 @@ async def get_news(param, database):
                     if json_data['body'] == None:
                         continue
                     else:
-                        database.insert(json_data)
+                        database.insert('realtime', 'nws', json_data)
                         # print(json_data)
     try:
         await connect(param, database)

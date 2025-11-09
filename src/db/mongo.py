@@ -28,16 +28,18 @@ class MongoDB:
         self.client = MongoClient(host=self.mongo_host, port=self.mongo_port)
         try:
             print(self.client.list_database_names())
-            self.database = self.client['realtime']
-            self.collection = self.database['nws']
+            # self.database = self.client['realtime']
+            # self.collection = self.database['nws']
         except Exception as e:
             raise Exception(
                 "The following error occurred: ", e)
         # log.debug(self.client.list_database_names())
 
-    def insert(self, json_data):
+    def insert(self, database, collection, json_data):
         try:
-            result = self.collection.insert_one(json_data)
+            db = self.client[database]
+            col = db.database[collection]
+            result = col.insert_one(json_data)
             print(result.acknowledged)
         except Exception as e:
             raise Exception(
