@@ -112,8 +112,7 @@ async def get_news(param, database):
     except Exception as e:
         print(e)
         time.sleep(10)
-        await connect(param, database)
-
+        await get_news(param, database)
 
 
 # FUTURE_SISE = 'FC0'
