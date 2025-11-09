@@ -36,5 +36,5 @@ from src.utils.logging.colored_log_handler import ColoredLogHandler
 # logger.propagate = False   # workaround for duplicated logs in ipython
 # logger.addHandler(streamHandler)
 
-logging.basicConfig(level="DEBUG", handlers=[ColoredLogHandler()])
+logging.basicConfig(level="WARNING", handlers=[ColoredLogHandler()])
 log = logging.getLogger(__name__)

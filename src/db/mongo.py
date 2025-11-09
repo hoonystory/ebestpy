@@ -39,6 +39,8 @@ class MongoDB:
         try:
             db = self.client[database]
             col = db.database[collection]
+            print(db, col)
+
             result = col.insert_one(json_data)
             print(result.acknowledged)
         except Exception as e:
