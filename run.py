@@ -14,10 +14,7 @@ import time
 
 
 async def main():
-    # 로그인 객체 생성
-    login = Login()
-    if login.response.status_code != 200:
-        return False
+    # login = get_login_instance()
 
     # 날짜 정보를 저장하는 캘린더 객체 생성
     ins_calendar = calendar.Calendar()
@@ -42,20 +39,20 @@ async def main():
     #     }
     # )
 
-    info = {
-        "header": {
-            "token": login.access_token,
-            "tr_type": "3"
-        },
-        "body": {
-            "tr_cd": "NWS",
-            "tr_key": "NWS001"
-        }
-    }
+    # info = {
+    #     "header": {
+    #         "token": login.access_token,
+    #         "tr_type": "3"
+    #     },
+    #     "body": {
+    #         "tr_cd": "NWS",
+    #         "tr_key": "NWS001"
+    #     }
+    # }
 
     # print(str(json.dumps(info)))
-    print(login.access_token)
-    await get_news(json.dumps(info), mongo_db)
+    # print(login.access_token)
+    await get_news(None, mongo_db)
 
     # print(response)
 
@@ -92,27 +89,51 @@ async def main():
 #         # time.sleep(1)
 
 
-async def get_news(param, database):
-    async def connect(param, database):
+def get_login_instance():
+    # 로그인 객체 생성
+    login = Login()
+    if login.response.status_code != 200:
+        return False
+    return login
+
+
+async def get_news(login_instance, db_instance):
+    async def connect(json_param, db):
         # 웹 소켓에 접속을 합니다.
         async with websockets.connect("wss://openapi.ls-sec.co.kr:9443/websocket") as websocket:
             while True:
-                await websocket.send(param)
+                await websocket.send(json_param)
                 # 웹 소켓 서버로 부터 메시지가 오면 콘솔에 출력합니다.
                 while True:
                     data = await websocket.recv()
                     json_data = json.loads(data)
-                    if json_data['body'] == None:
+                    if json_data['body'] is None:
                         continue
                     else:
-                        database.insert('realtime', 'nws', json_data)
+                        db.insert('realtime', 'nws', json_data)
                         # print(json_data)
+    param = None
+    if login_instance is None:
+        login = get_login_instance()
+        print(login.access_token)
+        info = {
+            "header": {
+                "token": login.access_token,
+                "tr_type": "3"
+            },
+            "body": {
+                "tr_cd": "NWS",
+                "tr_key": "NWS001"
+            }
+        }
+        param = json.dumps(info)
+
     try:
-        await connect(param, database)
+        await connect(param, db_instance)
     except Exception as e:
         print(e)
         time.sleep(10)
-        await get_news(param, database)
+        await get_news(None, db_instance)
 
 
 # FUTURE_SISE = 'FC0'
